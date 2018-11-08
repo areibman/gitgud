@@ -1,4 +1,4 @@
-from fetch_api_game_data import get_match_history_data
+from get_all_challenger_data import get_match_history_data
 import requests
 import json
 from tqdm import tqdm
@@ -17,7 +17,7 @@ def get_challenger_game_data(region):
 
     challenger_info = []
 
-    for entry in tqdm(challengers['entries']):
+    for entry in tqdm(challengers['entries'][:2]):
         r = requests.get('https://' + region+API_URL +
                          ACCOUNT_ID + entry['playerOrTeamId'] + API_KEY)
 
@@ -34,12 +34,7 @@ def get_challenger_game_data(region):
     challenger_data = []
 
     for player_id in challenger_info:
-        challenger_data.append(get_match_history_data(region, player_id))
-
-    with open("player_history.json", 'w') as f:
-        f.write(json.dumps(challenger_data))
-
-    return challenger_data
+        get_match_history_data(region, player_id)
 
 
 if __name__ == '__main__':
