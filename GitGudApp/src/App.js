@@ -44,6 +44,20 @@ class App extends React.PureComponent {
     searchChampionKey: ""
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.searchChampion) {
+      const selectedChampImage = champData.filter(champ => {
+        if (champ.name === this.state.searchChampion) {
+          return champ.image;
+        }
+        return "";
+      });
+      const image =
+        selectedChampImage.length !== 0 ? selectedChampImage[0].image : "";
+      document.getElementById("champImg").src = "src/assets/champions/" + image;
+    }
+  }
+
   search = (searchValue, searchRegion, searchChampion, searchChampionKey) => {
     console.log(
       "firing search action with " +
@@ -56,6 +70,7 @@ class App extends React.PureComponent {
         searchChampionKey +
         ")"
     );
+
     this.setState({
       hasActiveSearch: true,
       searchValue,
@@ -66,14 +81,6 @@ class App extends React.PureComponent {
   };
 
   render() {
-    const selectedChampImage = champData.filter(champ => {
-      if (champ.name === this.state.searchChampion) {
-        return champ.image;
-      }
-      return "";
-    });
-    const image =
-      selectedChampImage.length !== 0 ? selectedChampImage[0].image : "";
     return (
       <Sandbox>
         <SearchComponent search={this.search} champData={champData} />
@@ -83,10 +90,7 @@ class App extends React.PureComponent {
             <InfoComponent>{this.state.searchRegion} | </InfoComponent>
             <InfoComponent>{this.state.searchChampion}</InfoComponent>
             <InfoComponent>
-              <img
-                src={"./assets/champions/" + image}
-                alt={this.state.searchChampion}
-              />
+              <img id="champImg" alt={this.state.searchChampion} />
             </InfoComponent>
           </SearchInformation>
         )}

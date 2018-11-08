@@ -29,8 +29,8 @@ const Expander = styled.span`
 `;
 
 const Chart = styled.div`
-  min-width: 250px;
-  min-height: 250px;
+  width: 250px;
+  height: 250px;
 `;
 // props
 // row
@@ -47,7 +47,15 @@ export class DataRow extends React.PureComponent {
   render() {
     const { title, data1, data2 } = this.props.row;
 
-    var ajaxResponse = [{ x: 60, y: 0.005 }, { x: 80, y: 0.01 }, { x: 90, y: 0.02 }, { x: 111, y: 0.05 }, { x: 114, y: 0.50 }, { x: 160, y: 0.30 }, { x: 180, y: 0.10 }]
+    var ajaxResponse = [
+      { x: 60, y: 0.005 },
+      { x: 80, y: 0.01 },
+      { x: 90, y: 0.02 },
+      { x: 111, y: 0.05 },
+      { x: 114, y: 0.5 },
+      { x: 160, y: 0.3 },
+      { x: 180, y: 0.1 }
+    ];
 
     const data = {
       datasets: [
