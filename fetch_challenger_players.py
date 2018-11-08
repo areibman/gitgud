@@ -17,7 +17,7 @@ def get_challenger_game_data(region):
 
     challenger_info = []
 
-    for entry in tqdm(challengers['entries'][:5]):
+    for entry in tqdm(challengers['entries']):
         r = requests.get('https://' + region+API_URL +
                          ACCOUNT_ID + entry['playerOrTeamId'] + API_KEY)
 
