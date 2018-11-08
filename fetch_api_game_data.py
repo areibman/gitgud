@@ -8,6 +8,14 @@ API_KEY = '?api_key=RGAPI-3a4ed2fd-dc8d-4bcc-acd5-360c10f25360'
 MATCH_ID_ENDPOINT = 'match/v3/matchlists/by-account/'
 MATCH_INFORMATION_ENDPOINT = 'match/v3/matches/'
 GAME_TIMELINE_ENDPOINT = 'match/v3/timelines/by-match/'
+SUMMONER_ENDPOINT = 'summoner/v3/summoners/by-name/'
+
+def get_summoner_id(region, summoner_name):
+    r = requests.get('https://'+region+API_URL +
+                     SUMMONER_ENDPOINT+urllib.parse.urlencode(summoner_name)+API_KEY)
+    data = r.json()
+
+    return data.id
 
 
 def get_match_history_data(region, player_id, champion_id="-1"):
