@@ -3,6 +3,7 @@ import styled, { injectGlobal } from "styled-components";
 import { DataContainer } from "./components/Hackathon/DataContainer";
 import { SearchComponent } from "./components/Hackathon/SearchComponent";
 import { champData } from "./assets/champions/champion.output.js";
+
 injectGlobal`
   body{
     margin: unset;
