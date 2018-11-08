@@ -1,7 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 import { Collapse } from "react-collapse";
-import { Line, Scatter } from "react-chartjs-2";
+import { Scatter } from "react-chartjs-2";
+import { darken } from "polished";
 
 const RowContainer = styled.div`
   display: flex;
@@ -12,14 +13,16 @@ const RowContainer = styled.div`
   margin-bottom: 10px;
   padding: 10px;
   color: darkgrey;
+  background-color: #c5f1fa;
 `;
 
 const InnerRow = styled.div`
   display: flex;
+  width: 100%;
 `;
 
 const RowItem = styled.div`
-  width: 100%;
+  width: ${props => props.widthPercent || "100%"};
 `;
 
 const Expander = styled.span`
@@ -28,9 +31,11 @@ const Expander = styled.span`
   cursor: pointer;
 `;
 
-const Chart = styled.div`
-  width: 250px;
-  height: 250px;
+const Title = styled.span`
+  font-weight: bold;
+  font-size: 24px;
+  color: white;
+  -webkit-text-stroke: 1px #008cba;
 `;
 // props
 // row
@@ -63,8 +68,8 @@ export class DataRow extends React.PureComponent {
           label: "My First dataset",
           fill: true,
           lineTension: 0.1,
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
+          backgroundColor: "#008cba",
+          borderColor: darken(0.1, "#008cba"),
           borderCapStyle: "butt",
           borderDash: [],
           borderDashOffset: 0.0,
@@ -87,7 +92,9 @@ export class DataRow extends React.PureComponent {
     return (
       <RowContainer>
         <InnerRow>
-          <RowItem>{title}</RowItem>
+          <RowItem>
+            <Title>{title}</Title>
+          </RowItem>
           <Expander onClick={this.toggleCollapse}>
             {this.state.expanded ? "-" : "+"}
           </Expander>
@@ -98,9 +105,12 @@ export class DataRow extends React.PureComponent {
             <RowItem>{data2}</RowItem>
           </InnerRow>
           <InnerRow>
-            <Chart>
-              <Scatter data={data} />
-            </Chart>
+            <RowItem widthPercent={"50%"}>
+              <Scatter data={data} options={{ maintainAspectRatio: false }} />
+            </RowItem>
+            <RowItem widthPercent={"50%"}>
+              <Scatter data={data} options={{ maintainAspectRatio: false }} />
+            </RowItem>
           </InnerRow>
           <InnerRow>
             <RowItem>{data1}</RowItem>
