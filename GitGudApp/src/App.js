@@ -20,6 +20,12 @@ const Sandbox = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: #f2f2f2;
+  cursor: ${props =>
+    props.itIsTeemoTime
+      ? "url(" +
+        require("./assets/champions/champion/TinyTeemo.png") +
+        "), auto !important;"
+      : "initial"};
 `;
 
 const SearchInformation = styled.div`
@@ -32,11 +38,30 @@ const SearchInformation = styled.div`
   img {
     width: 32px;
     height: 32px;
+    margin-right: 5px;
   }
 `;
 
 const InfoComponent = styled.div`
   margin-right: 10px;
+`;
+
+const HiddenWrapper = styled.span`
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  :hover {
+    img {
+      visibility: visible;
+    }
+  }
+`;
+
+const DarkLordTeemo = styled.img`
+  visibility: hidden;
 `;
 
 class App extends React.PureComponent {
@@ -45,7 +70,8 @@ class App extends React.PureComponent {
     searchValue: "",
     searchRegion: "",
     searchChampion: "",
-    searchChampionKey: ""
+    searchChampionKey: "",
+    itIsTeemoTime: false
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -86,11 +112,21 @@ class App extends React.PureComponent {
     });
   };
 
+  itsTeemoTime = () => {
+    this.setState({ itIsTeemoTime: !this.state.itIsTeemoTime });
+  };
+
   render() {
     return (
-      <Sandbox>
+      <Sandbox id="sandbox" itIsTeemoTime={this.state.itIsTeemoTime}>
+        <HiddenWrapper>
+          <DarkLordTeemo
+            src={require("./assets/champions/champion/TinyTeemo.png")}
+            onClick={this.itsTeemoTime}
+          />
+        </HiddenWrapper>
         <SearchComponent search={this.search} champData={champData} />
-        {this.state.hasActiveSearch && (
+        {(this.state.hasActiveSearchm || true) && (
           <SearchInformation>
             <InfoComponent>Summoner: {this.state.searchValue} | </InfoComponent>
             <InfoComponent>{this.state.searchRegion} | </InfoComponent>
