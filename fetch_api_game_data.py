@@ -10,14 +10,26 @@ MATCH_INFORMATION_ENDPOINT = 'match/v3/matches/'
 GAME_TIMELINE_ENDPOINT = 'match/v3/timelines/by-match/'
 
 
-def get_match_history_data(region, champion_id, player_id):
+def get_match_history_data(region, player_id, champion_id="-1"):
+    """
+    Fetches game data given their unique player id
+        can additionally filter data by champion
+        args:
+            Region: string that identifies region
+            Player_id: string that uniquely identifies player
+            Champion_id: string that identifies champion (optional)
+        returns:
+            json object containing timestamp and game data of player given the above parameters 
+    """
 
     # ## Step 1
     # Get the matches
 
     r = requests.get('https://'+region+API_URL +
-                     MATCH_ID_ENDPOINT+player_id+API_KEY,)
+                     MATCH_ID_ENDPOINT+player_id+API_KEY)
 
+    print("Current endpoint query:", 'https://'+region+API_URL +
+          MATCH_ID_ENDPOINT+player_id+API_KEY)
     matches = r.json()
 
     match_list = []
@@ -58,8 +70,11 @@ def get_match_history_data(region, champion_id, player_id):
 
         time.sleep(0.2)
 
-    subset_matches = [
-        match for match in match_info_list if match['champion_id'] == champion_id]
+    if champion_id != "-1":
+        subset_matches = [
+            match for match in match_info_list if match['champion_id'] == champion_id]
+    else:
+        subset_matches = match_info_list
 
     # ## Step 3:
     # Get participant ID from step 2 and collect data
@@ -67,7 +82,6 @@ def get_match_history_data(region, champion_id, player_id):
     player_match_timeline = {}
 
     for match in tqdm(subset_matches):
-
         game_timeline_request =\
             requests.get('https://'+region+API_URL + GAME_TIMELINE_ENDPOINT +
                          str(match['match_id'])+API_KEY)
@@ -88,4 +102,4 @@ def get_match_history_data(region, champion_id, player_id):
 
 
 if __name__ == '__main__':
-    print(get_match_history_data('euw1', '85', '219693852'))
+    print(get_match_history_data('euw1', '219693852', '85'))
