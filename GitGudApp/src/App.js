@@ -3,6 +3,7 @@ import styled, { injectGlobal } from "styled-components";
 import { DataContainer } from "./components/Hackathon/DataContainer";
 import { SearchComponent } from "./components/Hackathon/SearchComponent";
 import { champData } from "./assets/champions/champion.output.js";
+import axios from "axios";
 
 injectGlobal`
   body{
@@ -13,6 +14,8 @@ injectGlobal`
     box-sizing: border-box;
   }
 `;
+
+axios.defaults.baseURL = "http://localhost:5000/";
 
 const Sandbox = styled.div`
   display: flex;
@@ -64,6 +67,10 @@ const DarkLordTeemo = styled.img`
   visibility: hidden;
 `;
 
+const ErrorText = styled.span`
+  font-size: 18px;
+`;
+
 class App extends React.PureComponent {
   state = {
     hasActiveSearch: false,
@@ -71,7 +78,8 @@ class App extends React.PureComponent {
     searchRegion: "",
     searchChampion: "",
     searchChampionKey: "",
-    itIsTeemoTime: false
+    itIsTeemoTime: false,
+    allData: null
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -90,7 +98,12 @@ class App extends React.PureComponent {
     }
   }
 
-  search = (searchValue, searchRegion, searchChampion, searchChampionKey) => {
+  search = async (
+    searchValue,
+    searchRegion,
+    searchChampion,
+    searchChampionKey
+  ) => {
     console.log(
       "firing search action with " +
         searchValue +
@@ -102,13 +115,28 @@ class App extends React.PureComponent {
         searchChampionKey +
         ")"
     );
+    let allData;
+    await axios
+      .get("/teemo")
+      .then(response => {
+        console.log("success", response);
+        allData = response.data;
+      })
+      .catch(error => {
+        console.log("error", error);
+      })
+      .then(() => {
+        console.log("theend");
+      });
+    console.log("AllData", allData);
 
     this.setState({
       hasActiveSearch: true,
       searchValue,
       searchRegion,
       searchChampion,
-      searchChampionKey
+      searchChampionKey,
+      allData
     });
   };
 
@@ -117,6 +145,10 @@ class App extends React.PureComponent {
   };
 
   render() {
+    const hasActiveSearch =
+      this.state.searchValue &&
+      this.state.searchRegion &&
+      this.state.searchChampionKey;
     return (
       <Sandbox id="sandbox" itIsTeemoTime={this.state.itIsTeemoTime}>
         <HiddenWrapper>
@@ -126,17 +158,17 @@ class App extends React.PureComponent {
           />
         </HiddenWrapper>
         <SearchComponent search={this.search} champData={champData} />
-        {(this.state.hasActiveSearchm || true) && (
+        {hasActiveSearch ? (
           <SearchInformation>
             <InfoComponent>Summoner: {this.state.searchValue} | </InfoComponent>
             <InfoComponent>{this.state.searchRegion} | </InfoComponent>
             <InfoComponent>{this.state.searchChampion}</InfoComponent>
             <img id="champImg" alt={this.state.searchChampion} />
           </SearchInformation>
+        ) : (
+          <ErrorText>Please select a summoner, champion, and region.</ErrorText>
         )}
-        <DataContainer
-          showSearch={this.state.hasActiveSearch && this.state.searchValue}
-        />
+        <DataContainer showSearch={hasActiveSearch} />
       </Sandbox>
     );
   }

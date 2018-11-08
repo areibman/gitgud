@@ -57,7 +57,7 @@ export class DataContainer extends React.PureComponent {
     return (
       <Container>
         <ScrollContainer>
-          {this.props.showSearch || true
+          {this.props.showSearch
             ? this.renderRows()
             : this.props.noResults
               ? "No results found."

@@ -32,13 +32,15 @@ const InputsColumn = styled.div`
 
 const SelectRow = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   & > * {
     width: 48%;
   }
 `;
 
-const SearchInput = styled.input`
+const SearchInput = styled.input.attrs({
+  placeholder: "Summoner Name. Ex. ImaAsheHole"
+})`
   height: 36px;
   border-radius: 4px;
   outline: none;
@@ -117,8 +119,16 @@ export class SearchComponent extends React.PureComponent {
             onChange={this.valueChange}
           />
           <SelectRow>
-            <Select options={regions} onChange={this.handleRegionChange} />
-            <Select options={champions} onChange={this.handleChampionChange} />
+            <Select
+              options={regions}
+              onChange={this.handleRegionChange}
+              placeholder="Select Region"
+            />
+            <Select
+              options={champions}
+              onChange={this.handleChampionChange}
+              placeholder="Select Champion"
+            />
           </SelectRow>
         </InputsColumn>
         <SearchButton onClick={this.search}> Search </SearchButton>
