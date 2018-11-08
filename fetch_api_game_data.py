@@ -12,7 +12,7 @@ SUMMONER_ENDPOINT = 'summoner/v3/summoners/by-name/'
 
 def get_summoner_id(region, summoner_name):
     r = requests.get('https://'+region+API_URL +
-                     SUMMONER_ENDPOINT+urllib.urlencode(summoner_name)+API_KEY)
+                     SUMMONER_ENDPOINT+urllib.parse.urlencode(summoner_name)+API_KEY)
     data = r.json()
 
     return data.id
