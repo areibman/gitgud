@@ -29,6 +29,10 @@ const SearchInformation = styled.div`
   min-height: 40px;
   border-bottom: 1px solid #008cba;
   background-color: #c5f1fa;
+  img {
+    width: 32px;
+    height: 32px;
+  }
 `;
 
 const InfoComponent = styled.div`
@@ -54,7 +58,9 @@ class App extends React.PureComponent {
       });
       const image =
         selectedChampImage.length !== 0 ? selectedChampImage[0].image : "";
-      document.getElementById("champImg").src = "src/assets/champions/" + image;
+      document.getElementById(
+        "champImg"
+      ).src = require("./assets/champions/champion/" + image);
     }
   }
 
@@ -89,9 +95,7 @@ class App extends React.PureComponent {
             <InfoComponent>Summoner: {this.state.searchValue} | </InfoComponent>
             <InfoComponent>{this.state.searchRegion} | </InfoComponent>
             <InfoComponent>{this.state.searchChampion}</InfoComponent>
-            <InfoComponent>
-              <img id="champImg" alt={this.state.searchChampion} />
-            </InfoComponent>
+            <img id="champImg" alt={this.state.searchChampion} />
           </SearchInformation>
         )}
         <DataContainer
