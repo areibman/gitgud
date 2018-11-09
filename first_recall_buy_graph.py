@@ -173,11 +173,11 @@ def get_recall_timestamps_for_player(match_timelines):
 # ENDPOINT GO HERE!!!!
 
 
-def save_graph(champion_id, player_id):
+def save_graph(champion_id, player_id, region):
 
     challenger_recall_times = get_recalls_by_champion(champion_id)
     player_data = get_player_recall_history(
-        player_id=player_id, champion_id=champion_id, region='euw1')
+        player_id=player_id, champion_id=champion_id, region=region)
     player_recall_times = get_recall_timestamps_for_player(player_data)
 
     plt.figure(dpi=100)
@@ -193,8 +193,10 @@ def save_graph(champion_id, player_id):
     with open('svg.txt', 'r') as f:
         svg = f.read()
 
+    plt.close()
+
     return svg
 
 
 if __name__ == '__main__':
-    print(save_graph(266, '219693852'))
+    print(save_graph(266, '219693852', 'euw1'))
