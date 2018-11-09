@@ -1,11 +1,10 @@
 import * as React from "react";
 import styled from "styled-components";
 import { DataRow } from "./DataRow";
+import background from "../../assets/background.jpg";
+import { transparentize } from "polished";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -15,9 +14,20 @@ const Container = styled.div`
     width: 100%;
     height: 350px;
   }
+  background-image: url(${background});
 `;
 
-const ScrollContainer = styled.div``;
+const ScrollContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  background-color: ${props => (props.bg ? transparentize(0.2, "white") : "")};
+  border-radius: 4px;
+`;
+
+const ErrorText = styled.span`
+  font-size: 18px;
+  color: white;
+`;
 
 export class DataContainer extends React.PureComponent {
   renderRows = () => {
@@ -34,7 +44,6 @@ export class DataContainer extends React.PureComponent {
       })
     ) : (
       <span>
-        {" "}
         No data for (your champ || that champ). I don't care to check which. Go
         away.
       </span>
@@ -44,12 +53,14 @@ export class DataContainer extends React.PureComponent {
   render() {
     return (
       <Container>
-        <ScrollContainer>
-          {this.props.showSearch
-            ? this.renderRows()
-            : this.props.noResults
-              ? "No results found."
-              : ""}
+        <ScrollContainer bg={this.props.showSearch}>
+          {this.props.showSearch ? (
+            this.renderRows()
+          ) : (
+            <ErrorText>
+              Please select a summoner, champion, and region.
+            </ErrorText>
+          )}
         </ScrollContainer>
       </Container>
     );

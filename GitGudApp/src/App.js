@@ -68,10 +68,6 @@ const DarkLordTeemo = styled.img`
   visibility: hidden;
 `;
 
-const ErrorText = styled.span`
-  font-size: 18px;
-`;
-
 class App extends React.PureComponent {
   state = {
     hasActiveSearch: false,
@@ -158,7 +154,7 @@ class App extends React.PureComponent {
           />
         </HiddenWrapper>
         <SearchComponent search={this.search} champData={champData} />
-        {hasActiveSearch ? (
+        {hasActiveSearch && (
           <React.Fragment>
             <SearchInformation>
               <InfoComponent>
@@ -169,8 +165,6 @@ class App extends React.PureComponent {
               <img id="champImg" alt={this.state.searchChampion} />
             </SearchInformation>
           </React.Fragment>
-        ) : (
-          <ErrorText>Please select a summoner, champion, and region.</ErrorText>
         )}
         <DataContainer
           showSearch={hasActiveSearch}
