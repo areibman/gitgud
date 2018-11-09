@@ -14,7 +14,7 @@ SUMMONER_ENDPOINT = 'summoner/v3/summoners/by-name/'
 def get_summoner_infos(region, summoner_name):
     print(summoner_name)
     r = requests.get('https://'+region+API_URL +
-                     SUMMONER_ENDPOINT+quote_plus(summoner_name)+API_KEY)
+                     SUMMONER_ENDPOINT+summoner_name+API_KEY)
     data = r.json()
 
     return data
