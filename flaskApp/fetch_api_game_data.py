@@ -12,11 +12,9 @@ GAME_TIMELINE_ENDPOINT = 'match/v3/timelines/by-match/'
 SUMMONER_ENDPOINT = 'summoner/v3/summoners/by-name/'
 
 def get_summoner_infos(region, summoner_name):
-    print(summoner_name)
     r = requests.get('https://'+region+API_URL +
                      SUMMONER_ENDPOINT+summoner_name+API_KEY)
     data = r.json()
-
     return data
 
 
@@ -29,7 +27,7 @@ def get_match_history_data(region, player_id, champion_id="-1"):
             Player_id: string that uniquely identifies player
             Champion_id: string that identifies champion (optional)
         returns:
-            json object containing timestamp and game data of player given the above parameters 
+            json object containing timestamp and game data of player given the above parameters
     """
 
     # ## Step 1
@@ -109,7 +107,3 @@ def get_match_history_data(region, player_id, champion_id="-1"):
         time.sleep(0.01)
 
     return player_match_timeline
-
-
-if __name__ == '__main__':
-    print(get_match_history_data('euw1', '219693852', '85'))

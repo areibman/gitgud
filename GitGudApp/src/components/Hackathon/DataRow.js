@@ -22,7 +22,7 @@ const InnerRow = styled.div`
 `;
 
 const RowItem = styled.div`
-  width: ${props => props.widthPercent || "100%"};
+  width: 45%;
 `;
 
 const Expander = styled.span`
@@ -49,26 +49,13 @@ export class DataRow extends React.PureComponent {
   };
 
   renderSvgs = () => {
-    return this.props.svgs.map(svg => {
-      return <RowItem dangerouslySetInnerHTML={{ __html: svg }} />;
+    return this.props.svgs.map((svg, index) => {
+      return (
+        <RowItem key={svg + index} dangerouslySetInnerHTML={{ __html: svg }} />
+      );
     });
   };
   render() {
-    console.log(this.props);
-    return (
-      <RowContainer>
-        <InnerRow>
-          <RowItem>
-            <Title>{this.props.title}</Title>
-          </RowItem>
-          <Expander onClick={this.toggleCollapse}>
-            {this.state.expanded ? "-" : "+"}
-          </Expander>
-        </InnerRow>
-        <Collapse isOpened={this.state.expanded}>
-          <InnerRow>{this.renderSvgs()}</InnerRow>
-        </Collapse>
-      </RowContainer>
-    );
+    return <React.Fragment>{this.renderSvgs()}</React.Fragment>;
   }
 }

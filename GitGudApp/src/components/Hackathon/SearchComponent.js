@@ -58,7 +58,7 @@ const SearchButton = styled.button.attrs({
   type: "button"
 })`
   width: 18%;
-  height: 50%;
+  height: 36px;
   font-size: 18px;
   font-weight: bold;
   color: white;
@@ -85,6 +85,7 @@ export class SearchComponent extends React.PureComponent {
   search = () => {
     this.props.search(
       this.state.searchValue,
+      (this.state.selectedRegion || { label: "" }).label,
       (this.state.selectedRegion || { value: "" }).value,
       (this.state.selectedChampion || { label: "" }).label,
       (this.state.selectedChampion || { value: "" }).value

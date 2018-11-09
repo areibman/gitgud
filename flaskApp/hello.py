@@ -5,6 +5,7 @@ import os
 from pprint import pprint
 from flask import request
 from fetch_api_game_data import get_summoner_infos
+from first_recall_buy_graph import save_graph
 
 app = Flask(__name__)
 CORS(app)
@@ -29,10 +30,19 @@ def get_summoner_data():
     region = request.args.get('region')
     summoner_name = request.args.get('summonerName')
 
-    summoner_infos=get_summoner_infos(region,summoner_name)
+    summoner_infos=get_summoner_infos(region, summoner_name)
 
     return json.dumps([
-        {'key': 'goldRow1','svgs': ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"> <defs> <g id="src" opacity="0.5" fill="none" stroke-width="12"> <circle cx="-20" cy="19" r="1"/> <path d="M0,19s0-20-20-20m0-19s40,0,40,40" stroke-linecap="round"/> </g> </defs> <use xlink:href="#src" transform="translate(64,56) rotate(240)" stroke="#44F"/> <use xlink:href="#src" transform="translate(42,36) rotate(120)" stroke="#0C0"/> <use xlink:href="#src" transform="translate(35,65)" stroke="#F00"/></svg>']},
+        {'key': 'Items','svgs': ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"> <defs> <g id="src" opacity="0.5" fill="none" stroke-width="12"> <circle cx="-20" cy="19" r="1"/> <path d="M0,19s0-20-20-20m0-19s40,0,40,40" stroke-linecap="round"/> </g> </defs> <use xlink:href="#src" transform="translate(64,56) rotate(240)" stroke="#44F"/> <use xlink:href="#src" transform="translate(42,36) rotate(120)" stroke="#0C0"/> <use xlink:href="#src" transform="translate(35,65)" stroke="#F00"/></svg>']},
         {'key': 'goldRow2','svgs': ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"> <defs> <g id="src" opacity="0.5" fill="none" stroke-width="12"> <circle cx="-20" cy="19" r="1"/> <path d="M0,19s0-20-20-20m0-19s40,0,40,40" stroke-linecap="round"/> </g> </defs> <use xlink:href="#src" transform="translate(64,56) rotate(240)" stroke="#44F"/> <use xlink:href="#src" transform="translate(42,36) rotate(120)" stroke="#0C0"/> <use xlink:href="#src" transform="translate(35,65)" stroke="#F00"/></svg>','<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"> <defs> <g id="src" opacity="0.5" fill="none" stroke-width="12"> <circle cx="-20" cy="19" r="1"/> <path d="M0,19s0-20-20-20m0-19s40,0,40,40" stroke-linecap="round"/> </g> </defs> <use xlink:href="#src" transform="translate(64,56) rotate(240)" stroke="#44F"/> <use xlink:href="#src" transform="translate(42,36) rotate(120)" stroke="#0C0"/> <use xlink:href="#src" transform="translate(35,65)" stroke="#F00"/></svg>']},
         {'key': 'goldRow3','svgs': ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100"> <defs> <g id="src" opacity="0.5" fill="none" stroke-width="12"> <circle cx="-20" cy="19" r="1"/> <path d="M0,19s0-20-20-20m0-19s40,0,40,40" stroke-linecap="round"/> </g> </defs> <use xlink:href="#src" transform="translate(64,56) rotate(240)" stroke="#44F"/> <use xlink:href="#src" transform="translate(42,36) rotate(120)" stroke="#0C0"/> <use xlink:href="#src" transform="translate(35,65)" stroke="#F00"/></svg>']}
         ])
+
+@app.route('/firstRecallBuy')
+def get_first_recall():
+    summoner_name = request.args.get('summonerName')
+    region_id = request.args.get('region')
+    summoner_info = get_summoner_infos(region_id, summoner_name)
+    player_id = summoner_info['accountId']
+    champion_id = request.args.get('champion')
+    return save_graph(champion_id,player_id, region_id)

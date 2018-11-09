@@ -6,10 +6,7 @@ import pandas as pd
 import seaborn as sns
 import os
 import requests
-
-from plotly import __version__
-import plotly.figure_factory as ff
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+import time
 
 import datetime
 import scipy.stats as stats
@@ -30,7 +27,7 @@ def get_recalls_by_champion(champion):
 
             champion_in_game = False
             for participant in participants:
-                if participant['championId'] == champion:
+                if str(participant['championId']) == str(champion):
                     champion_in_game = True
                     break
 
@@ -63,7 +60,7 @@ def get_recalls_by_champion(champion):
 
             for kill in champion_kills:
                 if purchase['timestamp'] < 30000 + kill['timestamp'] and purchase['timestamp'] > kill['timestamp'] - 30000:
-                    if kill['victimId'] == purchase['participantId']:
+                    if str(kill['victimId']) == str(purchase['participantId']):
                         purchased_after_kill = True
                         break
             if purchased_after_kill:
@@ -97,35 +94,37 @@ def get_player_recall_history(player_id, champion_id, region):
     MATCH_ID_ENDPOINT = 'match/v3/matchlists/by-account/'
     GAME_TIMELINE_ENDPOINT = 'match/v3/timelines/by-match/'
     MATCH_INFORMATION_ENDPOINT = 'match/v3/matches/'
-
+    player_id = str(player_id)
     r = requests.get('https://'+region+API_URL +
                      MATCH_ID_ENDPOINT+player_id+API_KEY)
     matches = r.json()
-
-    match_list = [match['gameId']
-                  for match in matches['matches'] if match['champion'] == champion_id]
+    print('https://'+region+API_URL +
+                     MATCH_ID_ENDPOINT+player_id+API_KEY)
+    match_list= []
+    for match in matches['matches']:
+        if str(match['champion']) == str(champion_id):
+            match_list.append(match['gameId'])
 
     match_timelines = {}
     for match in match_list:
         r = requests.get('https://'+region+API_URL +
                          GAME_TIMELINE_ENDPOINT+str(match)+API_KEY)
         match_timelines[match] = r.json()
-
         # Query the participant ID from a new request, and ad it to the match_timelines dict
         pid_request = requests.get(
             'https://'+region+API_URL+MATCH_INFORMATION_ENDPOINT+str(match)+API_KEY)
         pid_json = pid_request.json()
 
         # Find the participant ID and add it as a key to our megadict
+        print('FKINPID')
         for participant in pid_json['participants']:
-            if participant['championId'] == champion_id:
+            if str(participant['championId']) == str(champion_id):
                 match_timelines[match]['participantId'] = participant['participantId']
-
     return match_timelines
 
 
 def get_recall_timestamps_for_player(match_timelines):
-
+    print('matchTimelines',len(match_timelines))
     for match in match_timelines:
         participantId = match_timelines[match]['participantId']
         #   Items purchased
@@ -140,7 +139,7 @@ def get_recall_timestamps_for_player(match_timelines):
         # Filter items purchased to only those made by the participant
         player_buys = []
         for purchase in item_purchase_events:
-            if purchase['participantId'] == participantId:
+            if str(purchase['participantId']) == str(participantId):
                 player_buys.append(purchase)
 
         #   Champions Killed
@@ -159,7 +158,7 @@ def get_recall_timestamps_for_player(match_timelines):
         purchased_after_kill = False
         for purchase in player_buys:
             for kill in champion_kills:
-                if kill['victimId'] == participantId:
+                if str(kill['victimId']) == str(participantId):
                     if purchase['timestamp'] < 30000 + kill['timestamp'] and purchase['timestamp'] > kill['timestamp'] - 30000:
                         purchased_after_kill = True
                         break
@@ -167,34 +166,36 @@ def get_recall_timestamps_for_player(match_timelines):
                 continue
             else:
                 recall_buys.append(purchase)
-
     return [buy['timestamp'] for buy in recall_buys]
 
 # ENDPOINT GO HERE!!!!
 
 
-def save_graph(champion_id, player_id):
+def save_graph(champion_id, player_id, region_id):
 
     challenger_recall_times = get_recalls_by_champion(champion_id)
     player_data = get_player_recall_history(
-        player_id=player_id, champion_id=champion_id, region='euw1')
+        player_id=player_id, champion_id=champion_id, region=region_id)
     player_recall_times = get_recall_timestamps_for_player(player_data)
+    print('YEET', len(challenger_recall_times), challenger_recall_times, len(player_recall_times), player_recall_times)
+    if len(challenger_recall_times) == 0 or len(player_recall_times) == 0:
+        return json.dumps([{'key':'First Recall Time' ,'svgs':['<span />']}])
+    else:
+        plt.figure(dpi=100)
+        plt.yticks([])
+        plt.title('First recall purchase times for Challenger Players (in seconds)')
 
-    plt.figure(dpi=100)
-    plt.yticks([])
-    plt.title('First recall purchase times for Challenger Players (in seconds)')
-    ax = sns.kdeplot(
-        [purchase/1000 for purchase in challenger_recall_times], color='blue', shade=True)
-    ax2 = sns.kdeplot(
-        [purchase/1000 for purchase in player_recall_times], color='red', shade=True)
+        ax = sns.kdeplot(
+            [purchase/1000 for purchase in challenger_recall_times], color='blue', shade=True)
+        ax2 = sns.kdeplot(
+            [purchase/1000 for purchase in player_recall_times], color='red', shade=True)
 
-    plt.savefig("First-recall-purchase-for-player-single-match.svg")
-    os.rename('First-recall-purchase-for-player-single-match.svg', 'svg.txt')
-    with open('svg.txt', 'r') as f:
-        svg = f.read()
+        plt.legend(('Challenger Player Average Recall','Your Average Recall'))
+        plt.savefig("First-recall-purchase-for-player-single-match.svg", transparent=True)
 
-    return svg
-
-
-if __name__ == '__main__':
-    print(save_graph(266, '219693852'))
+        plt.close()
+        os.rename('First-recall-purchase-for-player-single-match.svg', 'svg.txt')
+        print('hey it saved!')
+        with open('svg.txt', 'r') as f:
+            svg = f.read()
+        return json.dumps([{'key':'First Recall Time' ,'svgs':[svg, svg]}])

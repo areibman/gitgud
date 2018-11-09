@@ -23,7 +23,7 @@ const Sandbox = styled.div`
   flex-direction: column;
   width: 100vw;
   height: 100vh;
-  background-color: #f2f2f2;
+  background-color: #c5f1fa;
   cursor: ${props =>
     props.itIsTeemoTime
       ? "url(" +
@@ -77,10 +77,11 @@ class App extends React.PureComponent {
     hasActiveSearch: false,
     searchValue: "",
     searchRegion: "",
+    searchRegionKey: "",
     searchChampion: "",
     searchChampionKey: "",
     itIsTeemoTime: false,
-    requestedData: null
+    requestedData: []
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -102,17 +103,18 @@ class App extends React.PureComponent {
   search = async (
     searchValue,
     searchRegion,
+    searchRegionKey,
     searchChampion,
     searchChampionKey
   ) => {
     let requestedData;
     this.setState({ loading: true });
     await axios
-      .get("/summoner-data", {
+      .get("/firstRecallBuy", {
         params: {
-          region: searchRegion,
+          region: searchRegionKey,
           summonerName: searchValue,
-          championId: searchChampionKey
+          champion: searchChampionKey
         }
       })
       .then(response => {
@@ -125,12 +127,12 @@ class App extends React.PureComponent {
       .then(() => {
         console.log("theend");
       });
-    console.log("AllData", requestedData);
 
     this.setState({
       hasActiveSearch: true,
       searchValue,
       searchRegion,
+      searchRegionKey,
       searchChampion,
       searchChampionKey,
       requestedData
@@ -144,7 +146,7 @@ class App extends React.PureComponent {
   render() {
     const hasActiveSearch =
       this.state.searchValue &&
-      this.state.searchRegion &&
+      this.state.searchRegionKey &&
       this.state.searchChampionKey;
 
     return (
