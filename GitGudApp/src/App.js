@@ -117,7 +117,7 @@ class App extends React.PureComponent {
       })
       .then(response => {
         console.log("success", response);
-        requestedData = response;
+        requestedData = response.data;
       })
       .catch(error => {
         console.log("error", error);
