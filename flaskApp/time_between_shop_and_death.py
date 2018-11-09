@@ -23,18 +23,17 @@ def get_player_recall_history(player_id, champion_id, region):
     MATCH_INFORMATION_ENDPOINT = 'match/v3/matches/'
 
     r = requests.get('https://'+region+API_URL +
-                     MATCH_ID_ENDPOINT+player_id+API_KEY)
+                     MATCH_ID_ENDPOINT+str(player_id)+API_KEY)
     matches = r.json()
 
     match_list = [match['gameId']
-                  for match in matches['matches'] if match['champion'] == champion_id]
+                  for match in matches['matches'] if str(match['champion']) == str(champion_id)]
 
     match_timelines = {}
     for match in match_list:
         r = requests.get('https://'+region+API_URL +
                          GAME_TIMELINE_ENDPOINT+str(match)+API_KEY)
         match_timelines[match] = r.json()
-
         # Query the participant ID from a new request, and ad it to the match_timelines dict
         pid_request = requests.get(
             'https://'+region+API_URL+MATCH_INFORMATION_ENDPOINT+str(match)+API_KEY)
@@ -42,11 +41,9 @@ def get_player_recall_history(player_id, champion_id, region):
 
         # Find the participant ID and add it as a key to our megadict
         for participant in pid_json['participants']:
-            if participant['championId'] == champion_id:
+            if str(participant['championId']) == str(champion_id):
                 match_timelines[match]['participantId'] = participant['participantId']
-
     return match_timelines
-
 
 def get_player_time_between_death(match_timelines):
     """"""
@@ -55,28 +52,25 @@ def get_player_time_between_death(match_timelines):
         participantId = match_timelines[match]['participantId']
         #   Items purchased
         item_purchase_events = []
+        print('match_timeline frames',len(match_timelines[match]['frames']))
         for frame in match_timelines[match]['frames']:
-
             for event in frame['events']:
-
                 if event['type'] == 'ITEM_PURCHASED' and event['timestamp'] > 180000:
                     item_purchase_events.append(event)
 
         # Filter items purchased to only those made by the participant
         player_buys = []
+        print('item_purchase_events*********************', len(item_purchase_events))
         for purchase in item_purchase_events:
-            if purchase['participantId'] == participantId:
+            if str(purchase['participantId']) == str(participantId):
                 player_buys.append(purchase)
 
         #   Champions Killed
         champion_kills = []
         for frame in match_timelines[match]['frames']:
-
             for event in frame['events']:
                 if event['type'] == 'CHAMPION_KILL':
                     champion_kills.append(event)
-
-
 #                   if purchase['participantId']!= participantId:
 # #                     print(purchase['timestamp']['victimId'], participantId)
         time_betw_death_and_back = []
@@ -100,10 +94,10 @@ def get_challenger_time_between_death(champion):
     """
     death_times = []
 
-    for game_dump in os.listdir('./flaskApp/game_dumps'):
+    for game_dump in os.listdir('./game_dumps'):
         df = pd.DataFrame()
         try:
-            with open('./flaskApp/game_dumps/' + game_dump, 'r') as f:
+            with open('./game_dumps/' + game_dump, 'r') as f:
                 data = json.load(f)
             temp = pd.DataFrame(data['timeline']['frames'])
             participants = data['participants']
@@ -158,10 +152,10 @@ def get_challenger_time_between_death(champion):
     return [t[0] for t in death_times]
 
 
-def save_graph(champion_id, player_id, region):
+def save_shop_graph(champion_id, player_id, region):
     player_match_history = get_player_recall_history(
         player_id=player_id, champion_id=champion_id, region=region)
-
+    print('PLAYER MATCH HISTORY _*_**__*_*_**__**__**_', player_match_history)
     player_time_between_death = get_player_time_between_death(
         player_match_history)
     challenger_time_between_purchase_and_death = get_challenger_time_between_death(
@@ -179,14 +173,10 @@ def save_graph(champion_id, player_id, region):
     plt.legend(('Your time between shops and deaths',
                 'Challengers time between shops and deaths'))
 
-    plt.savefig("Time-between-deaths.svg")
+    plt.savefig("Time-between-deaths.svg", transparent=True)
     os.rename('Time-between-deaths.svg', 'svg_deaths.txt')
     with open('svg_deaths.txt', 'r') as f:
         svg = f.read()
     plt.close()
 
-    return(svg)
-
-
-if __name__ == '__main__':
-    print(save_graph(champion_id='266', player_id='219693852', region='euw1'))
+    return {'key':'Shop n\' Drop' ,'svgs':[svg]}

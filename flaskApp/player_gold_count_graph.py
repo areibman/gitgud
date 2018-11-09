@@ -20,10 +20,10 @@ def get_challenger_gold_delta(champion):
     """
     gold_count_dict = {}
 
-    for game_dump in os.listdir('./flaskApp/game_dumps'):
+    for game_dump in os.listdir('./game_dumps'):
         df = pd.DataFrame()
         try:
-            with open('./flaskApp/game_dumps/' + game_dump, 'r') as f:
+            with open('./game_dumps/' + game_dump, 'r') as f:
                 data = json.load(f)
             temp = pd.DataFrame(data['timeline']['frames'])
             participants = data['participants']
@@ -155,20 +155,22 @@ def get_player_recall_history(player_id, champion_id, region):
     MATCH_ID_ENDPOINT = 'match/v3/matchlists/by-account/'
     GAME_TIMELINE_ENDPOINT = 'match/v3/timelines/by-match/'
     MATCH_INFORMATION_ENDPOINT = 'match/v3/matches/'
-
+    player_id = str(player_id)
     r = requests.get('https://'+region+API_URL +
                      MATCH_ID_ENDPOINT+player_id+API_KEY)
     matches = r.json()
-
-    match_list = [match['gameId']
-                  for match in matches['matches'] if match['champion'] == champion_id]
+    print('https://'+region+API_URL +
+                     MATCH_ID_ENDPOINT+player_id+API_KEY)
+    match_list= []
+    for match in matches['matches']:
+        if str(match['champion']) == str(champion_id):
+            match_list.append(match['gameId'])
 
     match_timelines = {}
     for match in match_list:
         r = requests.get('https://'+region+API_URL +
                          GAME_TIMELINE_ENDPOINT+str(match)+API_KEY)
         match_timelines[match] = r.json()
-
         # Query the participant ID from a new request, and ad it to the match_timelines dict
         pid_request = requests.get(
             'https://'+region+API_URL+MATCH_INFORMATION_ENDPOINT+str(match)+API_KEY)
@@ -176,13 +178,12 @@ def get_player_recall_history(player_id, champion_id, region):
 
         # Find the participant ID and add it as a key to our megadict
         for participant in pid_json['participants']:
-            if participant['championId'] == champion_id:
+            if str(participant['championId']) == str(champion_id):
                 match_timelines[match]['participantId'] = participant['participantId']
-
     return match_timelines
 
 
-def save_graph(champion_id, player_id, region):
+def save_gold_graph(champion_id, player_id, region):
     player_match_history = get_player_recall_history(
         player_id, champion_id, region)
     player_gold_delta = get_player_gold_delta(player_match_history)
@@ -195,16 +196,11 @@ def save_graph(champion_id, player_id, region):
     plt.ylabel('Gold count held')
     plt.xlabel(
         '   Player gold held unused            Challengers gold held unused')
-    plt.savefig("Gold-saved.svg")
+    plt.savefig("Gold-saved.svg", transparent=True)
     os.rename('Gold-saved.svg', 'svg_gold.txt')
     with open('svg_gold.txt', 'r') as f:
         svg = f.read()
 
     plt.close()
 
-    return(svg)
-
-
-if __name__ == '__main__':
-    save_graph(champion_id='266',
-               player_id='219693852', region='euw1')
+    return {'key':'Gold held unused' ,'svgs':[svg]}

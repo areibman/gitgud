@@ -116,7 +116,6 @@ def get_player_recall_history(player_id, champion_id, region):
         pid_json = pid_request.json()
 
         # Find the participant ID and add it as a key to our megadict
-        print('FKINPID')
         for participant in pid_json['participants']:
             if str(participant['championId']) == str(champion_id):
                 match_timelines[match]['participantId'] = participant['participantId']
@@ -145,7 +144,6 @@ def get_recall_timestamps_for_player(match_timelines):
         #   Champions Killed
         champion_kills = []
         for frame in match_timelines[match]['frames']:
-
             for event in frame['events']:
                 if event['type'] == 'CHAMPION_KILL':
                     champion_kills.append(event)
@@ -171,7 +169,7 @@ def get_recall_timestamps_for_player(match_timelines):
 # ENDPOINT GO HERE!!!!
 
 
-def save_graph(champion_id, player_id, region_id):
+def save_fb_graph(champion_id, player_id, region_id):
 
     challenger_recall_times = get_recalls_by_champion(champion_id)
     player_data = get_player_recall_history(
@@ -198,4 +196,4 @@ def save_graph(champion_id, player_id, region_id):
         print('hey it saved!')
         with open('svg.txt', 'r') as f:
             svg = f.read()
-        return json.dumps([{'key':'First Recall Time' ,'svgs':[svg, svg]}])
+        return {'key':'First Recall Time' ,'svgs':[svg]}

@@ -5,8 +5,9 @@ import os
 from pprint import pprint
 from flask import request
 from fetch_api_game_data import get_summoner_infos
-from first_recall_buy_graph import save_graph
-
+from first_recall_buy_graph import save_fb_graph
+from time_between_shop_and_death import save_shop_graph
+from player_gold_count_graph import save_gold_graph
 app = Flask(__name__)
 CORS(app)
 
@@ -45,4 +46,4 @@ def get_first_recall():
     summoner_info = get_summoner_infos(region_id, summoner_name)
     player_id = summoner_info['accountId']
     champion_id = request.args.get('champion')
-    return save_graph(champion_id,player_id, region_id)
+    return json.dumps([save_fb_graph(champion_id,player_id, region_id), save_shop_graph(champion_id,player_id, region_id), save_gold_graph(champion_id,player_id, region_id)])
