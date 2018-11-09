@@ -31,11 +31,13 @@ const fakeRowData = [
 export class DataContainer extends React.PureComponent {
   renderRows = () => {
     return this.props.requestedData.map((row, index) => {
+      console.log(row);
       return (
         <DataRow
           loadAsOpen={index === 0 ? true : false}
           key={row.key}
-          row={row.svgs}
+          title={row.key}
+          svgs={row.svgs}
         />
       );
     });
