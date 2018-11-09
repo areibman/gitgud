@@ -3,6 +3,8 @@ from flask_cors import CORS
 import json
 import os
 from pprint import pprint
+from flask import request
+import ../fetch_api_game_data
 
 app = Flask(__name__)
 CORS(app)
@@ -21,3 +23,10 @@ def hello_world():
             print('removed-'+str(data['gameId'])+'.json')
 
     return json.dumps(json_array)
+
+@app.route('/summoner-data')
+def get_summoner_data():
+    region = request.args.get('region')
+    summoner_name = request.args.get('summonerName')
+    
+    return summoner_name
