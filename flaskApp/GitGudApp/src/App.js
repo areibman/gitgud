@@ -12,6 +12,7 @@ injectGlobal`
   }
   & * {
     box-sizing: border-box;
+    outline: none;
   }
 `;
 
@@ -79,7 +80,7 @@ class App extends React.PureComponent {
     searchChampion: "",
     searchChampionKey: "",
     itIsTeemoTime: false,
-    allData: null
+    requestedData: null
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -104,23 +105,13 @@ class App extends React.PureComponent {
     searchChampion,
     searchChampionKey
   ) => {
-    console.log(
-      "firing search action with " +
-        searchValue +
-        " in " +
-        searchRegion +
-        " on " +
-        searchChampion +
-        "(" +
-        searchChampionKey +
-        ")"
-    );
-    let allData;
+    let requestedData;
+    this.setState({ loading: true });
     await axios
       .get("/teemo")
       .then(response => {
         console.log("success", response);
-        allData = response.data;
+        requestedData = response.data;
       })
       .catch(error => {
         console.log("error", error);
@@ -128,7 +119,7 @@ class App extends React.PureComponent {
       .then(() => {
         console.log("theend");
       });
-    console.log("AllData", allData);
+    console.log("AllData", requestedData);
 
     this.setState({
       hasActiveSearch: true,
@@ -136,7 +127,7 @@ class App extends React.PureComponent {
       searchRegion,
       searchChampion,
       searchChampionKey,
-      allData
+      requestedData
     });
   };
 
@@ -149,6 +140,7 @@ class App extends React.PureComponent {
       this.state.searchValue &&
       this.state.searchRegion &&
       this.state.searchChampionKey;
+
     return (
       <Sandbox id="sandbox" itIsTeemoTime={this.state.itIsTeemoTime}>
         <HiddenWrapper>
@@ -159,12 +151,16 @@ class App extends React.PureComponent {
         </HiddenWrapper>
         <SearchComponent search={this.search} champData={champData} />
         {hasActiveSearch ? (
-          <SearchInformation>
-            <InfoComponent>Summoner: {this.state.searchValue} | </InfoComponent>
-            <InfoComponent>{this.state.searchRegion} | </InfoComponent>
-            <InfoComponent>{this.state.searchChampion}</InfoComponent>
-            <img id="champImg" alt={this.state.searchChampion} />
-          </SearchInformation>
+          <React.Fragment>
+            <SearchInformation>
+              <InfoComponent>
+                Summoner: {this.state.searchValue} |
+              </InfoComponent>
+              <InfoComponent>{this.state.searchRegion} | </InfoComponent>
+              <InfoComponent>{this.state.searchChampion}</InfoComponent>
+              <img id="champImg" alt={this.state.searchChampion} />
+            </SearchInformation>
+          </React.Fragment>
         ) : (
           <ErrorText>Please select a summoner, champion, and region.</ErrorText>
         )}

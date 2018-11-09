@@ -8,10 +8,16 @@ const SearchContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-height: 125px;
+  min-height: 175px;
   background-color: #c5f1fa;
   border-bottom: 1px solid #008cba;
   padding: 0px 15px;
+  background-image: ${props =>
+    props.champId
+      ? "url(//cdn.leagueofgraphs.com/img/banners/champion-banners/" +
+        props.champId +
+        ".jpg);"
+      : "url(//cdn.leagueofgraphs.com/img/banners/champion-banners/17.jpg);"};
 `;
 
 const ProjectName = styled.span`
@@ -111,7 +117,11 @@ export class SearchComponent extends React.PureComponent {
       { value: "JP", label: "JP" }
     ];
     return (
-      <SearchContainer>
+      <SearchContainer
+        champId={
+          this.state.selectedChampion ? this.state.selectedChampion.value : ""
+        }
+      >
         <ProjectName> GitGud </ProjectName>
         <InputsColumn>
           <SearchInput

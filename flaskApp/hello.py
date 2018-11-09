@@ -16,11 +16,11 @@ def hello_world():
     for item in os.listdir('game_dumps/'):
         with open('game_dumps/' + item, 'r') as data_file:
             data = json.load(data_file)
-        if data['gameDuration'] > 1200:
+        # if data['gameDuration'] > 1200:
             json_array.append(data)
-        else:
-            os.remove('game_dumps/'+str(data['gameId'])+'.json')
-            print('removed-'+str(data['gameId'])+'.json')
+        # else:
+        #     os.remove('game_dumps/'+str(data['gameId'])+'.json')
+        #     print('removed-'+str(data['gameId'])+'.json')
 
     return json.dumps(json_array)
 
