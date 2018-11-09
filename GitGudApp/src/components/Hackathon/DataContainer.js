@@ -43,10 +43,7 @@ export class DataContainer extends React.PureComponent {
         );
       })
     ) : !this.props.loading ? (
-      <span>
-        No data for (your champ || that champ). I don't care to check which. Go
-        away.
-      </span>
+      <span>Rito networks are spaget. Please refresh or try again.</span>
     ) : null;
   };
 
