@@ -104,18 +104,19 @@ export class SearchComponent extends React.PureComponent {
       return { value: champ.championId, label: champ.name };
     });
     const regions = [
-      { value: "EUNE", label: "EUNE" },
-      { value: "EUW", label: "EUW" },
-      { value: "NA", label: "NA" },
-      { value: "BR", label: "BR" },
-      { value: "LAN", label: "LAN" },
-      { value: "LAS", label: "LAS" },
-      { value: "OCE", label: "OCE" },
-      { value: "KR", label: "KR" },
-      { value: "RU", label: "RU" },
-      { value: "TR", label: "TR" },
-      { value: "JP", label: "JP" }
+      { value: "eun1", label: "EUNE" },
+      { value: "euw1", label: "EUW" },
+      { value: "na1", label: "NA" },
+      { value: "br1", label: "BR" },
+      { value: "la1", label: "LAN" },
+      { value: "la2", label: "LAS" },
+      { value: "oc1", label: "OCE" },
+      { value: "kr", label: "KR" },
+      { value: "ru", label: "RU" },
+      { value: "tr1", label: "TR" },
+      { value: "jp1", label: "JP" }
     ];
+
     return (
       <SearchContainer
         champId={

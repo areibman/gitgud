@@ -108,10 +108,16 @@ class App extends React.PureComponent {
     let requestedData;
     this.setState({ loading: true });
     await axios
-      .get("/teemo")
+      .get("/summoner-data", {
+        params: {
+          region: searchRegion,
+          summonerName: searchValue,
+          championId: searchChampionKey
+        }
+      })
       .then(response => {
         console.log("success", response);
-        requestedData = response.data;
+        requestedData = response;
       })
       .catch(error => {
         console.log("error", error);
@@ -164,7 +170,10 @@ class App extends React.PureComponent {
         ) : (
           <ErrorText>Please select a summoner, champion, and region.</ErrorText>
         )}
-        <DataContainer showSearch={hasActiveSearch} />
+        <DataContainer
+          showSearch={hasActiveSearch}
+          requestedData={this.state.requestedData}
+        />
       </Sandbox>
     );
   }

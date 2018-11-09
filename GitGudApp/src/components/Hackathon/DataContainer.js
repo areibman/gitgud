@@ -15,39 +15,27 @@ const Container = styled.div`
 const ScrollContainer = styled.div``;
 const fakeRowData = [
   {
-    title: "rowTitle 0",
-    data1: 11,
-    data2: "data 2 0"
+    title: "rowTitle 0"
   },
   {
-    title: "rowTitle 1",
-    data1: 11,
-    data2: "data 2 1"
+    title: "rowTitle 1"
   },
   {
-    title: "rowTitle 2",
-    data1: 11,
-    data2: "data 2 2"
+    title: "rowTitle 2"
   },
   {
-    title: "rowTitle 3",
-    data1: 11,
-    data2: "data 2 3"
+    title: "rowTitle 3"
   }
 ];
 
-// noResults
-// hasActiveSearch
 export class DataContainer extends React.PureComponent {
-  state = {};
-
   renderRows = () => {
-    return fakeRowData.map((row, index) => {
+    return this.props.requestedData.map((row, index) => {
       return (
         <DataRow
           loadAsOpen={index === 0 ? true : false}
-          key={row.title}
-          row={row}
+          key={row.key}
+          row={row.svgs}
         />
       );
     });
