@@ -160,8 +160,8 @@ def get_player_recall_history(player_id, champion_id, region):
                      MATCH_ID_ENDPOINT+player_id+API_KEY)
     matches = r.json()
     print('https://'+region+API_URL +
-                     MATCH_ID_ENDPOINT+player_id+API_KEY)
-    match_list= []
+          MATCH_ID_ENDPOINT+player_id+API_KEY)
+    match_list = []
     for match in matches['matches']:
         if str(match['champion']) == str(champion_id):
             match_list.append(match['gameId'])
@@ -203,4 +203,29 @@ def save_gold_graph(champion_id, player_id, region):
 
     plt.close()
 
-    return {'key':'Gold held unused' ,'svgs':[svg]}
+    return {'key': 'Gold held unused', 'svgs': [svg]}
+
+
+def save_gold_timeline(champion_id, player_id, region):
+    player_match_history = get_player_recall_history(
+        player_id, champion_id, region)
+    player_gold_delta = get_player_gold_delta(player_match_history)
+
+    challenger_gold_delta = get_challenger_gold_delta(champion_id)
+    plt.figure(dpi=150)
+    fig = plt.figure(dpi=100)
+
+    plt.ylabel('Gold count')
+    plt.xlabel('In-game minutes')
+
+    plt.plot(np.array(golds[0]))
+    plt.plot(np.array(player_gold_delta[0]))
+
+    plt.savefig("Gold-over-time.svg", transparent=True)
+    os.rename("Gold-over-time.svg", 'svg_gold_graph.txt')
+    with open('svg_gold_graph.txt', 'r') as f:
+        svg = f.read()
+
+    plt.close()
+
+    return {'key': 'Gold held over time', 'svgs': [svg]}
