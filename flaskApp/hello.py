@@ -4,7 +4,7 @@ import json
 import os
 from pprint import pprint
 from flask import request
-import ../fetch_api_game_data
+from fetch_api_game_data import get_summoner_infos
 
 app = Flask(__name__)
 CORS(app)
@@ -28,5 +28,7 @@ def hello_world():
 def get_summoner_data():
     region = request.args.get('region')
     summoner_name = request.args.get('summonerName')
+
+    summoner_infos=get_summoner_infos(region,summoner_name)
     
-    return summoner_name
+    return json.dumps(summoner_infos)

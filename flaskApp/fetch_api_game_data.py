@@ -1,6 +1,7 @@
 import requests
 import time
 from tqdm import tqdm
+from urllib.parse import quote_plus
 import json
 
 API_URL = '.api.riotgames.com/lol/'
@@ -10,12 +11,13 @@ MATCH_INFORMATION_ENDPOINT = 'match/v3/matches/'
 GAME_TIMELINE_ENDPOINT = 'match/v3/timelines/by-match/'
 SUMMONER_ENDPOINT = 'summoner/v3/summoners/by-name/'
 
-def get_summoner_id(region, summoner_name):
+def get_summoner_infos(region, summoner_name):
+    print(summoner_name)
     r = requests.get('https://'+region+API_URL +
-                     SUMMONER_ENDPOINT+urllib.parse.urlencode(summoner_name)+API_KEY)
+                     SUMMONER_ENDPOINT+quote_plus(summoner_name)+API_KEY)
     data = r.json()
 
-    return data.id
+    return data
 
 
 def get_match_history_data(region, player_id, champion_id="-1"):
