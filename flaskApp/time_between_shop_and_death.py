@@ -168,11 +168,8 @@ def save_shop_graph(champion_id, player_id, region):
     plt.rc('font', **font)
     plt.yticks([])
     plt.title('Time spent between item purchase and death')
-    ax = sns.kdeplot([purchase/1000 for purchase in challenger_time_between_purchase_and_death],
-                      color='blue', shade=True).set(xlim=(0, 1800))
-
-    ax2 = sns.kdeplot([purchase/1000 for purchase in player_time_between_death],
-                     color='red', shade=True).set(xlim=(0, 1800))
+    ax = sns.kdeplot([purchase/1000 for purchase in challenger_time_between_purchase_and_death], shade=True).set(xlim=(0, 1800))
+    ax2 = sns.kdeplot([purchase/1000 for purchase in player_time_between_death], shade=True).set(xlim=(0, 1800))
 
     plt.xlabel('In-game seconds')
 

@@ -119,12 +119,13 @@ def get_player_recall_history(player_id, champion_id, region):
         for participant in pid_json['participants']:
             if str(participant['championId']) == str(champion_id):
                 match_timelines[match]['participantId'] = participant['participantId']
+
     return match_timelines
 
 
 def get_recall_timestamps_for_player(match_timelines):
-    print('matchTimelines',len(match_timelines))
     for match in match_timelines:
+        print( match_timelines[match])
         participantId = match_timelines[match]['participantId']
         #   Items purchased
         item_purchase_events = []
@@ -145,9 +146,6 @@ def get_recall_timestamps_for_player(match_timelines):
             for event in frame['events']:
                 if event['type'] == 'CHAMPION_KILL':
                     champion_kills.append(event)
-
-#                   if purchase['participantId']!= participantId:
-# #                     print(purchase['timestamp']['victimId'], participantId)
 
         #  Ignore purchases after death
         recall_buys = []
@@ -184,9 +182,9 @@ def save_fb_graph(champion_id, player_id, region_id):
     plt.title('First recall purchase times')
 
     ax = sns.kdeplot(
-        [purchase/1000 for purchase in challenger_recall_times], color='blue', shade=True)
+        [purchase/1000 for purchase in challenger_recall_times], shade=True)
     ax2 = sns.kdeplot(
-        [purchase/1000 for purchase in player_recall_times], color='red', shade=True)
+        [purchase/1000 for purchase in player_recall_times], shade=True)
 
     plt.legend(('Challengers','You'))
     plt.savefig("First-recall-purchase-for-player-single-match.svg", transparent=True)

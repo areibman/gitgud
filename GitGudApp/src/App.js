@@ -1,6 +1,6 @@
 import * as React from "react";
 import { transparentize } from "polished";
-import styled, { injectGlobal } from "styled-components";
+import styled, { injectGlobal, keyframes } from "styled-components";
 import { DataContainer } from "./components/Hackathon/DataContainer";
 import { SearchComponent } from "./components/Hackathon/SearchComponent";
 import { champData } from "./assets/champions/champion.output.js";
@@ -75,20 +75,62 @@ const DarkLordTeemo = styled.img`
 
 const LoadingDiv = styled.div`
   position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   top: 175px;
-  font-size: 48px;
-  font-weight: bold;
   left: 0;
   height: calc(${window.innerHeight}px - 195px);
   width: calc(100% - 20px);
   background-color: ${transparentize(0.2, "white")};
   border-radius: 4px;
   margin: 10px;
+`;
+
+const LoadingDivAgain = styled.div`
+  position: absolute;
+  top: 175px;
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+  width: calc(100% - 20px);
+  border-radius: 4px;
+  margin: 10px;
   color: white;
   -webkit-text-stroke: 1px #008cba;
+`;
+
+const teemoframes = keyframes`
+  0% {
+    margin: 15px;
+  }
+  25% {
+    margin: calc(${window.innerHeight}px - 345px) 0 0 0;
+  }
+  50% {
+    margin: calc(${window.innerHeight}px - 345px) 0 0 calc(100% - 128px);
+  }
+  75% {
+    margin: 0 0 0 calc(100% - 128px);
+  }
+  100% {
+    margin: 15px;
+    transform:rotateZ(1800deg);
+  }
+`;
+
+const TeemoFace = styled.img`
+  position: relative;
+  height: 128px;
+  width: 128px;
+  margin: 0;
+  padding: 3vmin;
+  overflow: hidden;
+  animation-name: ${teemoframes};
+  animation-duration: 12s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-delay: 0s;
+  background-image: ${"url(" +
+    require("./assets/champions/champion/Teemo.png") +
+    ");"};
 `;
 
 class App extends React.PureComponent {
@@ -191,7 +233,12 @@ class App extends React.PureComponent {
             </SearchInformation>
           </React.Fragment>
         )}
-        {this.state.loading && <LoadingDiv>LOADING...</LoadingDiv>}
+        {this.state.loading && (
+          <LoadingDiv>
+            <LoadingDivAgain>Loading...</LoadingDivAgain>
+            <TeemoFace />
+          </LoadingDiv>
+        )}
         <DataContainer
           showSearch={hasActiveSearch}
           loading={this.state.loading}

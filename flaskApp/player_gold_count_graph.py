@@ -193,11 +193,11 @@ def save_gold_graph(champion_id, player_id, region):
     plt.figure(dpi=150)
     plt.rc('font', **font)
     sns.set(style="whitegrid")
-    sns.boxplot(data=[player_gold_delta[0], challenger_gold_delta[0]])
+    sns.boxplot(data=[challenger_gold_delta[0], player_gold_delta[0]])
     plt.title('Current gold held unused (sampled every min)')
     plt.ylabel('Gold count held')
     plt.xlabel(
-        '   Player gold held unused            Challengers gold held unused')
+        '   Challenger gold held unused            Player gold held unused')
     plt.savefig("Gold-saved.svg", transparent=True)
     os.rename('Gold-saved.svg', 'svg_gold.txt')
     with open('svg_gold.txt', 'r') as f:
@@ -222,9 +222,9 @@ def save_gold_timeline(champion_id, player_id, region):
     plt.xlabel('In-game minutes')
     plt.title('Gold held over time')
 
-    plt.plot(np.array(challenger_gold_delta[0]))
-    plt.plot(np.array(player_gold_delta[0]))
-
+    ax = plt.plot(np.array(challenger_gold_delta[0]))
+    ax2 = plt.plot(np.array(player_gold_delta[0]))
+    plt.legend(('Challengers','You'))
     plt.savefig("Gold-over-time.svg", transparent=True)
     os.rename("Gold-over-time.svg", 'svg_gold_graph.txt')
     with open('svg_gold_graph.txt', 'r') as f:
