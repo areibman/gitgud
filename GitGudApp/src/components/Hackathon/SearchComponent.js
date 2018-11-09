@@ -26,6 +26,7 @@ const ProjectName = styled.span`
   font-weight: bold;
   color: white;
   -webkit-text-stroke: 1px #008cba;
+  text-align: center;
 `;
 
 const InputsColumn = styled.div`
@@ -124,7 +125,7 @@ export class SearchComponent extends React.PureComponent {
           this.state.selectedChampion ? this.state.selectedChampion.value : ""
         }
       >
-        <ProjectName> GitGud </ProjectName>
+        <ProjectName> Back 2 Basics </ProjectName>
         <InputsColumn>
           <SearchInput
             value={this.state.searchValue}

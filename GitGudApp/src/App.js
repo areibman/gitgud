@@ -1,4 +1,5 @@
 import * as React from "react";
+import { transparentize } from "polished";
 import styled, { injectGlobal } from "styled-components";
 import { DataContainer } from "./components/Hackathon/DataContainer";
 import { SearchComponent } from "./components/Hackathon/SearchComponent";
@@ -44,6 +45,10 @@ const SearchInformation = styled.div`
     height: 32px;
     margin-right: 5px;
   }
+  ${props =>
+    props.loading
+      ? "visibility: hidden; min-height: 0px; height: 0px;"
+      : "visibility: visible;"};
 `;
 
 const InfoComponent = styled.div`
@@ -68,6 +73,24 @@ const DarkLordTeemo = styled.img`
   visibility: hidden;
 `;
 
+const LoadingDiv = styled.div`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 175px;
+  font-size: 48px;
+  font-weight: bold;
+  left: 0;
+  height: calc(${window.innerHeight}px - 195px);
+  width: calc(100% - 20px);
+  background-color: ${transparentize(0.2, "white")};
+  border-radius: 4px;
+  margin: 10px;
+  color: white;
+  -webkit-text-stroke: 1px #008cba;
+`;
+
 class App extends React.PureComponent {
   state = {
     hasActiveSearch: false,
@@ -77,7 +100,8 @@ class App extends React.PureComponent {
     searchChampion: "",
     searchChampionKey: "",
     itIsTeemoTime: false,
-    requestedData: []
+    requestedData: [],
+    loading: false
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -104,7 +128,7 @@ class App extends React.PureComponent {
     searchChampionKey
   ) => {
     let requestedData;
-    this.setState({ loading: true });
+    await this.setState({ loading: true });
     await axios
       .get("/firstRecallBuy", {
         params: {
@@ -126,6 +150,7 @@ class App extends React.PureComponent {
 
     this.setState({
       hasActiveSearch: true,
+      loading: false,
       searchValue,
       searchRegion,
       searchRegionKey,
@@ -156,7 +181,7 @@ class App extends React.PureComponent {
         <SearchComponent search={this.search} champData={champData} />
         {hasActiveSearch && (
           <React.Fragment>
-            <SearchInformation>
+            <SearchInformation loading={this.state.loading}>
               <InfoComponent>
                 Summoner: {this.state.searchValue} |
               </InfoComponent>
@@ -166,8 +191,10 @@ class App extends React.PureComponent {
             </SearchInformation>
           </React.Fragment>
         )}
+        {this.state.loading && <LoadingDiv>LOADING...</LoadingDiv>}
         <DataContainer
           showSearch={hasActiveSearch}
+          loading={this.state.loading}
           requestedData={this.state.requestedData}
         />
       </Sandbox>

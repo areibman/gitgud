@@ -14,7 +14,6 @@ from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import datetime
 import scipy.stats as stats
 
-
 def get_challenger_gold_delta(champion):
     """
     """
@@ -187,9 +186,12 @@ def save_gold_graph(champion_id, player_id, region):
     player_match_history = get_player_recall_history(
         player_id, champion_id, region)
     player_gold_delta = get_player_gold_delta(player_match_history)
-
     challenger_gold_delta = get_challenger_gold_delta(champion_id)
+    font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 12}
     plt.figure(dpi=150)
+    plt.rc('font', **font)
     sns.set(style="whitegrid")
     sns.boxplot(data=[player_gold_delta[0], challenger_gold_delta[0]])
     plt.title('Current gold held unused (sampled every min)')
@@ -210,15 +212,17 @@ def save_gold_timeline(champion_id, player_id, region):
     player_match_history = get_player_recall_history(
         player_id, champion_id, region)
     player_gold_delta = get_player_gold_delta(player_match_history)
-
     challenger_gold_delta = get_challenger_gold_delta(champion_id)
+    font = {'family' : 'normal',
+            'weight' : 'bold',
+            'size'   : 12}
     plt.figure(dpi=150)
-    fig = plt.figure(dpi=100)
-
+    plt.rc('font', **font)
     plt.ylabel('Gold count')
     plt.xlabel('In-game minutes')
+    plt.title('Gold held over time')
 
-    plt.plot(np.array(golds[0]))
+    plt.plot(np.array(challenger_gold_delta[0]))
     plt.plot(np.array(player_gold_delta[0]))
 
     plt.savefig("Gold-over-time.svg", transparent=True)
@@ -226,6 +230,7 @@ def save_gold_timeline(champion_id, player_id, region):
     with open('svg_gold_graph.txt', 'r') as f:
         svg = f.read()
 
+    plt.close()
     plt.close()
 
     return {'key': 'Gold held over time', 'svgs': [svg]}

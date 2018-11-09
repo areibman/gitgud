@@ -42,12 +42,12 @@ export class DataContainer extends React.PureComponent {
           />
         );
       })
-    ) : (
+    ) : !this.props.loading ? (
       <span>
         No data for (your champ || that champ). I don't care to check which. Go
         away.
       </span>
-    );
+    ) : null;
   };
 
   render() {
@@ -56,11 +56,11 @@ export class DataContainer extends React.PureComponent {
         <ScrollContainer bg={this.props.showSearch}>
           {this.props.showSearch ? (
             this.renderRows()
-          ) : (
+          ) : !this.props.loading ? (
             <ErrorText>
               Please select a summoner, champion, and region.
             </ErrorText>
-          )}
+          ) : null}
         </ScrollContainer>
       </Container>
     );

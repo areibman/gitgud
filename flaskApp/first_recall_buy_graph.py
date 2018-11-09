@@ -129,9 +129,7 @@ def get_recall_timestamps_for_player(match_timelines):
         #   Items purchased
         item_purchase_events = []
         for frame in match_timelines[match]['frames']:
-
             for event in frame['events']:
-
                 if event['type'] == 'ITEM_PURCHASED' and event['timestamp'] > 180000:
                     item_purchase_events.append(event)
 
@@ -175,25 +173,27 @@ def save_fb_graph(champion_id, player_id, region_id):
     player_data = get_player_recall_history(
         player_id=player_id, champion_id=champion_id, region=region_id)
     player_recall_times = get_recall_timestamps_for_player(player_data)
-    print('YEET', len(challenger_recall_times), challenger_recall_times, len(player_recall_times), player_recall_times)
-    if len(challenger_recall_times) == 0 or len(player_recall_times) == 0:
-        return json.dumps([{'key':'First Recall Time' ,'svgs':['<span />']}])
-    else:
-        plt.figure(dpi=100)
-        plt.yticks([])
-        plt.title('First recall purchase times for Challenger Players (in seconds)')
 
-        ax = sns.kdeplot(
-            [purchase/1000 for purchase in challenger_recall_times], color='blue', shade=True)
-        ax2 = sns.kdeplot(
-            [purchase/1000 for purchase in player_recall_times], color='red', shade=True)
+    font = {'family' : 'normal',
+            'weight' : 'bold',
+            'size'   : 12}
 
-        plt.legend(('Challenger Player Average Recall','Your Average Recall'))
-        plt.savefig("First-recall-purchase-for-player-single-match.svg", transparent=True)
+    plt.figure(dpi=100)
+    plt.rc('font', **font)
+    plt.yticks([])
+    plt.title('First recall purchase times')
 
-        plt.close()
-        os.rename('First-recall-purchase-for-player-single-match.svg', 'svg.txt')
-        print('hey it saved!')
-        with open('svg.txt', 'r') as f:
-            svg = f.read()
-        return {'key':'First Recall Time' ,'svgs':[svg]}
+    ax = sns.kdeplot(
+        [purchase/1000 for purchase in challenger_recall_times], color='blue', shade=True)
+    ax2 = sns.kdeplot(
+        [purchase/1000 for purchase in player_recall_times], color='red', shade=True)
+
+    plt.legend(('Challengers','You'))
+    plt.savefig("First-recall-purchase-for-player-single-match.svg", transparent=True)
+
+    plt.close()
+    os.rename('First-recall-purchase-for-player-single-match.svg', 'svg.txt')
+    print('hey it saved!')
+    with open('svg.txt', 'r') as f:
+        svg = f.read()
+    return {'key':'First Recall Time' ,'svgs':[svg]}

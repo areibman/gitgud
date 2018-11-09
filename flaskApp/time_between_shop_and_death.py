@@ -155,23 +155,29 @@ def get_challenger_time_between_death(champion):
 def save_shop_graph(champion_id, player_id, region):
     player_match_history = get_player_recall_history(
         player_id=player_id, champion_id=champion_id, region=region)
-    print('PLAYER MATCH HISTORY _*_**__*_*_**__**__**_', player_match_history)
     player_time_between_death = get_player_time_between_death(
         player_match_history)
     challenger_time_between_purchase_and_death = get_challenger_time_between_death(
         champion_id)
 
+    font = {'family' : 'normal',
+            'weight' : 'bold',
+            'size'   : 12}
+
     fig = plt.figure(dpi=100)
+    plt.rc('font', **font)
     plt.yticks([])
-    plt.title('Time spent between item purchase and death (in seconds)')
-    ax = sns.kdeplot([purchase/1000 for purchase in player_time_between_death],
-                     color='blue', shade=True).set(xlim=(0, 1800))
-    ax2 = sns.kdeplot([purchase/1000 for purchase in challenger_time_between_purchase_and_death],
-                      color='red', shade=True).set(xlim=(0, 1800))
+    plt.title('Time spent between item purchase and death')
+    ax = sns.kdeplot([purchase/1000 for purchase in challenger_time_between_purchase_and_death],
+                      color='blue', shade=True).set(xlim=(0, 1800))
+
+    ax2 = sns.kdeplot([purchase/1000 for purchase in player_time_between_death],
+                     color='red', shade=True).set(xlim=(0, 1800))
+
     plt.xlabel('In-game seconds')
 
-    plt.legend(('Your time between shops and deaths',
-                'Challengers time between shops and deaths'))
+    plt.legend(('Challengers',
+                'You'))
 
     plt.savefig("Time-between-deaths.svg", transparent=True)
     os.rename('Time-between-deaths.svg', 'svg_deaths.txt')
