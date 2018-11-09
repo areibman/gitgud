@@ -82,6 +82,7 @@ const LoadingDiv = styled.div`
   background-color: ${transparentize(0.2, "white")};
   border-radius: 4px;
   margin: 10px;
+  overflow: hidden;
 `;
 
 const LoadingDivAgain = styled.div`
@@ -95,6 +96,7 @@ const LoadingDivAgain = styled.div`
   margin: 10px;
   color: white;
   -webkit-text-stroke: 1px #008cba;
+  overflow: hidden;
 `;
 
 const teemoframes = keyframes`
